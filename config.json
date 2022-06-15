@@ -1,0 +1,35 @@
+{
+  "version": 0.1,
+  "script_path": "src/drone_data_gen.py",
+  "test_script_path": "",
+  "drone_obj_path": "input/drone_model/sample_drone.obj",
+  "drone_obj_name": "drone_obj",
+  "drone_limits": [[50, 50, 100], [-50, -50, 5]],
+  "dataset_size": 1,
+
+  "rad": 0.25,
+
+  "cam_name": "camera",
+  "cam_loc": [0, 0, 0],
+  "cam_mode": "PERSP",
+  "cam_scale": 1,
+
+  "sphere_grid_size": [3,3],
+  "sphere_grid_res": 0.1,
+
+  "light_name": "light",
+  "light_type": "SUN",
+  "light_loc": [0, 0, 200],
+  "light_angle": [0, 0, 0],
+  "light_energy": 200,
+  "light_color": [1, 1, 1],
+  "light_rad": 0.1,
+
+  "min_ht": 1.75,
+  "max_ht": 2.0,
+  "map_min_val": 1,
+  "map_max_val": 0,
+
+  "out_dir": "output",
+  "data_out": ""
+}
