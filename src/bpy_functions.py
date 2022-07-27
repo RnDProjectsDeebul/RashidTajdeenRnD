@@ -55,15 +55,33 @@ def track_to_constrain(cam_name, target_name):
     cam_obj.constraints.new(type='TRACK_TO').target = target_obj
 
 
-def render_surface_image(save_loc):
-    """
-    This functions renders the surface image and saves it in the loc specified
-    :param save_loc: the save location of the image (string)
-    :return: none
-    """
-    scene.render.image_settings.file_format = 'PNG'
-    scene.render.filepath = save_loc
-    bpy.context.view_layer.use_pass_normal = True
+def set_resolution(res):
+    bpy.context.scene.render.resolution_x = res[0]
+    bpy.context.scene.render.resolution_y = res[1]
+
+
+# def render_surface_image(save_loc):
+#     """
+#     This functions renders the surface image and saves it in the loc specified
+#     :param save_loc: the save location of the image (string)
+#     :return: none
+#     """
+#     scene.render.image_settings.file_format = 'PNG'
+#     scene.render.filepath = save_loc
+#     bpy.context.view_layer.use_pass_normal = True
+#     bpy.ops.render.render(write_still=1)
+
+
+def render_surface_image(save_loc, render_settings):
+    bpy.context.scene.render.engine = render_settings["engine"]
+    if render_settings["engine"] == "CYCLES":
+        bpy.context.scene.cycles.samples = render_settings["samples"]
+        # Setting device as GPU without a config file param,
+        # Blender switches to CPU on its own if GPU is not available
+        bpy.context.scene.cycles.device = "GPU"
+
+    bpy.context.scene.render.image_settings.file_format = 'PNG'
+    bpy.context.scene.render.filepath = save_loc
     bpy.ops.render.render(write_still=1)
 
 

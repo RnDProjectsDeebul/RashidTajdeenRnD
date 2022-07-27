@@ -28,6 +28,7 @@ add_camera(config["cam_name"],
            config["cam_loc"],
            config["cam_mode"],
            config["cam_scale"])
+set_resolution(config["out_resolution"])
 
 v_fov, h_fov = get_fov(config["cam_name"])
 
@@ -58,7 +59,8 @@ for i in range(config["dataset_size"]):
 
     rotate_cam(config["cam_name"], [v_angle, h_angle])
 
-    render_surface_image(config["out_dir"] + '/drone_dataset_' + timestamp + '/images/drone_' + str(i + 1) + '.png')
+    render_surface_image(config["out_dir"] + '/drone_dataset_' + timestamp + '/images/drone_' + str(i + 1) + '.png',
+                         config["render_settings"])
 
     dist = math.sqrt(target_loc[0]**2 + target_loc[1]**2 + target_loc[2]**2)
     next_data = np.append(np.array([target_loc]), np.array([[dist, target_rot]]), axis=1)
