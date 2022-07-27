@@ -41,7 +41,7 @@ add_single_light(config["light_name"],
                  config["light_color"],
                  config["light_angle"])
 
-data = np.asarray([["x", "y", "z", "dist", "drone_rot"]])
+data = np.asarray([["x", "y", "z", "dist", "drone_rot", "img_path"]])
 
 for i in range(config["dataset_size"]):
     limit_high = config["drone_limits"][0]
@@ -59,11 +59,12 @@ for i in range(config["dataset_size"]):
 
     rotate_cam(config["cam_name"], [v_angle, h_angle])
 
-    render_surface_image(config["out_dir"] + '/drone_dataset_' + timestamp + '/images/drone_' + str(i + 1) + '.png',
+    save_loc = config["out_dir"] + '/drone_dataset_' + timestamp + '/images/drone_' + str(i + 1) + '.png'
+    render_surface_image(save_loc,
                          config["render_settings"])
 
     dist = math.sqrt(target_loc[0]**2 + target_loc[1]**2 + target_loc[2]**2)
-    next_data = np.append(np.array([target_loc]), np.array([[dist, target_rot]]), axis=1)
+    next_data = np.append(np.array([target_loc]), np.array([[dist, target_rot, save_loc]]), axis=1)
     data = np.append(data, next_data, axis=0)
 
 write_data(config["out_dir"] + '/drone_dataset_' + timestamp + '/data/drone.csv', data)
