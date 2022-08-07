@@ -1,5 +1,6 @@
 import sys
 import os
+import json
 from datetime import datetime
 from random import randint
 
@@ -14,54 +15,54 @@ with open("config.json") as f:
     config = json.load(f)
 
 timestamp = datetime.now().strftime('%d%m%Y%H%M%S')
+base_dir = config["dataset_dir"] + '/' + config["object_name"] + '_' + timestamp + '/'
 
-if not os.path.exists(config["out_dir"] + '/drone_dataset_' + timestamp):
-    os.mkdir(config["out_dir"] + '/drone_dataset_' + timestamp)
-if not os.path.exists(config["out_dir"] + '/drone_dataset_' + timestamp + "/images"):
-    os.mkdir(config["out_dir"] + '/drone_dataset_' + timestamp + "/images")
-if not os.path.exists(config["out_dir"] + '/drone_dataset_' + timestamp + "/data"):
-    os.mkdir(config["out_dir"] + '/drone_dataset_' + timestamp + "/data")
+if not os.path.exists(config["dataset_dir"]):
+    os.mkdir(config["dataset_dir"])
+if not os.path.exists(base_dir):
+    os.mkdir(base_dir)
+if not os.path.exists(base_dir + "/images"):
+    os.mkdir(base_dir + "/images")
+if not os.path.exists(base_dir + "/data"):
+    os.mkdir(base_dir + "/data")
 
 initiate_blender()
+add_world(config["world_path"])
 
 add_camera(config["cam_name"],
            config["cam_loc"],
            config["cam_mode"],
            config["cam_scale"])
+set_resolution(config["out_resolution"])
 
-v_fov, h_fov = get_fov(config["cam_name"])
+add_obj("object/" + config["object_name"] + ".obj", config["object_name"] + "_obj")
 
-add_obj(config["drone_obj_path"], config["drone_obj_name"])
+# add_single_light(config["light_name"],
+#                  config["light_type"],
+#                  config["light_loc"],
+#                  config["light_energy"],
+#                  config["light_color"],
+#                  config["light_angle"])
 
-add_single_light(config["light_name"],
-                 config["light_type"],
-                 config["light_loc"],
-                 config["light_energy"],
-                 config["light_color"],
-                 config["light_angle"])
-
-data = np.asarray([["x", "y", "z", "dist", "drone_rot"]])
+data = np.asarray([["Distance", "ImgPath"]])
+csv_path = '/data/' + config["object_name"] + '.csv'
+write_data(base_dir + csv_path, data)
 
 for i in range(config["dataset_size"]):
-    limit_high = config["drone_limits"][0]
-    limit_low = config["drone_limits"][1]
-    target_loc = [randint(limit_low[0], limit_high[0]),
-                  randint(limit_low[1], limit_high[1]),
-                  randint(limit_low[2], limit_high[2])]
+
+    target_loc = get_random_loc(config["distance_limits"], config["elevation_limits"], config["rotation_limits"])
     target_rot = randint(0, 360)
 
     move_obj("drone_obj", target_loc, target_rot)
-    look_at(config["cam_name"], config["drone_obj_name"])
+    look_at(config["cam_name"], config["object_name"] + "_obj")
 
-    v_angle = randint(int(-v_fov*100/2), int(v_fov*100/2))/100.
-    h_angle = randint(int(-h_fov*100/2), int(h_fov*100/2))/100.
+    rotate_cam(config["cam_name"])
 
-    rotate_cam(config["cam_name"], [v_angle, h_angle])
-
-    render_surface_image(config["out_dir"] + '/drone_dataset_' + timestamp + '/images/drone_' + str(i + 1) + '.png')
+    img_path = 'images/' + config["object_name"] + '_' + str(i + 1) + '.jpg'
+    save_loc = base_dir + img_path
+    render_surface_image(save_loc,
+                         config["render_settings"])
 
     dist = math.sqrt(target_loc[0]**2 + target_loc[1]**2 + target_loc[2]**2)
-    next_data = np.append(np.array([target_loc]), np.array([[dist, target_rot]]), axis=1)
-    data = np.append(data, next_data, axis=0)
-
-write_data(config["out_dir"] + '/drone_dataset_' + timestamp + '/data/drone.csv', data)
+    data = np.array([[dist, img_path]])
+    write_data(base_dir + csv_path, data)
