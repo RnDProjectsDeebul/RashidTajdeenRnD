@@ -1,4 +1,4 @@
-dataset:
+gen_dataset:
 	python3 src/main.py
 
 test:

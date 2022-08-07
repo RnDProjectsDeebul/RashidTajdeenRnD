@@ -14,13 +14,15 @@ with open("config.json") as f:
     config = json.load(f)
 
 timestamp = datetime.now().strftime('%d%m%Y%H%M%S')
+obj = 'drone'
+base_dir = config["out_dir"] + '/' + obj + '_' + timestamp + '/'
 
-if not os.path.exists(config["out_dir"] + '/drone_dataset_' + timestamp):
-    os.mkdir(config["out_dir"] + '/drone_dataset_' + timestamp)
-if not os.path.exists(config["out_dir"] + '/drone_dataset_' + timestamp + "/images"):
-    os.mkdir(config["out_dir"] + '/drone_dataset_' + timestamp + "/images")
-if not os.path.exists(config["out_dir"] + '/drone_dataset_' + timestamp + "/data"):
-    os.mkdir(config["out_dir"] + '/drone_dataset_' + timestamp + "/data")
+if not os.path.exists(base_dir):
+    os.mkdir(base_dir)
+if not os.path.exists(base_dir + "/images"):
+    os.mkdir(base_dir + "/images")
+if not os.path.exists(base_dir + "/data"):
+    os.mkdir(base_dir + "/data")
 
 initiate_blender()
 
@@ -41,9 +43,14 @@ add_single_light(config["light_name"],
                  config["light_color"],
                  config["light_angle"])
 
-data = np.asarray([["x", "y", "z", "dist", "drone_rot", "img_path"]])
+data = np.asarray([["Distance", "ImgPath"]])
+csv_path = '/data/' + obj + '.csv'
+write_data(base_dir + csv_path, data)
 
 for i in range(config["dataset_size"]):
+
+    # distance = randint(config["distance_limits"][0], config["distance_limits"][1])
+
     limit_high = config["drone_limits"][0]
     limit_low = config["drone_limits"][1]
     target_loc = [randint(limit_low[0], limit_high[0]),
@@ -59,12 +66,14 @@ for i in range(config["dataset_size"]):
 
     rotate_cam(config["cam_name"], [v_angle, h_angle])
 
-    save_loc = config["out_dir"] + '/drone_dataset_' + timestamp + '/images/drone_' + str(i + 1) + '.png'
+    img_path = 'images/' + obj + '_' + str(i + 1) + '.png'
+    save_loc = base_dir + img_path
     render_surface_image(save_loc,
                          config["render_settings"])
 
     dist = math.sqrt(target_loc[0]**2 + target_loc[1]**2 + target_loc[2]**2)
-    next_data = np.append(np.array([target_loc]), np.array([[dist, target_rot, save_loc]]), axis=1)
-    data = np.append(data, next_data, axis=0)
+    data = np.array([[dist, img_path]])
+    write_data(base_dir + csv_path, data)
+    # data = np.append(data, next_data, axis=0)
 
-write_data(config["out_dir"] + '/drone_dataset_' + timestamp + '/data/drone.csv', data)
+# write_data(base_dir + csv_path, data)

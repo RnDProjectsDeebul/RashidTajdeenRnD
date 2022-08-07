@@ -23,6 +23,11 @@ def add_obj(obj_location, obj_name):
     imported_object = bpy.context.selected_objects[0]
     imported_object.name = obj_name
 
+def add_fbx(obj_location, obj_name):
+    bpy.ops.import_scene.fbx(filepath=obj_location)
+    imported_object = bpy.context.selected_objects[0]
+    imported_object.name = obj_name
+
 
 def move_obj(obj, target_loc, target_rot):
     obj = bpy.data.objects[obj]
@@ -70,6 +75,22 @@ def set_resolution(res):
 #     scene.render.filepath = save_loc
 #     bpy.context.view_layer.use_pass_normal = True
 #     bpy.ops.render.render(write_still=1)
+
+
+def add_background(filepath):
+    img = bpy.data.images.load(filepath)
+    for area in bpy.context.screen.areas:
+        if area.type == 'VIEW_3D':
+            space_data = area.spaces.active
+            bg = space_data.background_images.new()
+            bg.image = img
+            space_data.show_background_images = True
+            break
+
+    texture = bpy.data.textures.new("Texture.001", 'IMAGE')
+    texture.image = img
+    bpy.data.worlds['World'].active_texture = texture
+    bpy.context.scene.world.texture_slots[0].use_map_horizon = True
 
 
 def render_surface_image(save_loc, render_settings):
@@ -188,7 +209,8 @@ def append_data(data, loc):
 
 
 def write_data(data_loc, data):
-    np.savetxt(data_loc, data, delimiter=",", fmt="%s")
+    with open(data_loc, 'a') as csvfile:
+        np.savetxt(csvfile, data, delimiter=",", fmt="%s")
 
 
 def test_print(text):

@@ -2,10 +2,13 @@
   "version": 0.1,
   "script_path": "src/drone_data_gen.py",
   "test_script_path": "",
-  "drone_obj_path": "input/drone_model/drone.obj",
+  "drone_obj_path": "input/drone/drone.obj",
   "drone_obj_name": "drone_obj",
-  "drone_limits": [[20, 20, 20], [-20, -20, 2]],
-  "dataset_size": 10,
+  "drone_limits": [[8, 8, 8], [-8, -8, 1]],
+  "distance_limits": [2, 20],
+  "elevation_limits": [0, 90],
+  "rot_limits": [0, 360],
+  "dataset_size": 1,
 
   "rad": 0.25,
 
@@ -30,7 +33,7 @@
   "map_min_val": 1,
   "map_max_val": 0,
 
-  "out_dir": "output",
+  "out_dir": "dataset",
   "data_out": "",
   "out_resolution": [512, 512],
 
