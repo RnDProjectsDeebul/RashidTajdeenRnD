@@ -1,25 +1,20 @@
 {
-  "world_path": "world/open_world_2.hdr",
-
   "script_path": "src/drone_data_gen.py",
-  "test_script_path": "",
-  "drone_obj_path": "input/drone/drone.obj",
-  "drone_obj_name": "drone_obj",
-  "drone_limits": [[15, 15, 15], [-15, -15, 3]],
-  "distance_limits": [2, 20],
-  "elevation_limits": [0, 90],
-  "rot_limits": [0, 360],
-  "dataset_size": 1000,
 
-  "rad": 0.25,
+  "object_name": "drone",
+  "world_path": "world/open_world_2.hdr",
+  "dataset_dir": "dataset",
+  "dataset_size": 2,
+  "out_resolution": [256, 256],
+
+  "distance_limits": [5, 30],
+  "elevation_limits": [0, 90],
+  "rotation_limits": [0, 360],
 
   "cam_name": "camera",
   "cam_loc": [0, 0, 0],
   "cam_mode": "PERSP",
   "cam_scale": 1,
-
-  "sphere_grid_size": [3,3],
-  "sphere_grid_res": 0.1,
 
   "light_name": "light",
   "light_type": "SUN",
@@ -28,15 +23,6 @@
   "light_energy": 200,
   "light_color": [1, 1, 1],
   "light_rad": 0.1,
-
-  "min_ht": 1.75,
-  "max_ht": 2.0,
-  "map_min_val": 1,
-  "map_max_val": 0,
-
-  "out_dir": "dataset",
-  "data_out": "",
-  "out_resolution": [256, 256],
 
   "render_settings": {
     "engine": "CYCLES",
