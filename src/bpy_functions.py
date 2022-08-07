@@ -18,6 +18,33 @@ def initiate_blender():
     links = tree.links
 
 
+def add_world(world_path):
+    # Get the environment node tree of the current scene
+    node_tree_world = scene.world.node_tree
+    nodes_world = node_tree_world.nodes
+
+    # Clear all nodes
+    nodes_world.clear()
+
+    # Add Background node
+    node_background = nodes_world.new(type='ShaderNodeBackground')
+
+    # Add Environment Texture node
+    node_environment = nodes_world.new('ShaderNodeTexEnvironment')
+    # Load and assign the image to the node property
+    node_environment.image = bpy.data.images.load(world_path)
+    node_environment.location = -300, 0
+
+    # Add Output node
+    node_output = nodes_world.new(type='ShaderNodeOutputWorld')
+    node_output.location = 200, 0
+
+    # Link all nodes
+    links_world = node_tree_world.links
+    link = links_world.new(node_environment.outputs["Color"], node_background.inputs["Color"])
+    link = links_world.new(node_background.outputs["Background"], node_output.inputs["Surface"])
+
+
 def add_obj(obj_location, obj_name):
     bpy.ops.import_scene.obj(filepath=obj_location)
     imported_object = bpy.context.selected_objects[0]
@@ -77,22 +104,6 @@ def set_resolution(res):
 #     bpy.ops.render.render(write_still=1)
 
 
-def add_background(filepath):
-    img = bpy.data.images.load(filepath)
-    for area in bpy.context.screen.areas:
-        if area.type == 'VIEW_3D':
-            space_data = area.spaces.active
-            bg = space_data.background_images.new()
-            bg.image = img
-            space_data.show_background_images = True
-            break
-
-    texture = bpy.data.textures.new("Texture.001", 'IMAGE')
-    texture.image = img
-    bpy.data.worlds['World'].active_texture = texture
-    bpy.context.scene.world.texture_slots[0].use_map_horizon = True
-
-
 def render_surface_image(save_loc, render_settings):
     bpy.context.scene.render.engine = render_settings["engine"]
     if render_settings["engine"] == "CYCLES":
@@ -101,7 +112,7 @@ def render_surface_image(save_loc, render_settings):
         # Blender switches to CPU on its own if GPU is not available
         bpy.context.scene.cycles.device = "GPU"
 
-    bpy.context.scene.render.image_settings.file_format = 'PNG'
+    bpy.context.scene.render.image_settings.file_format = 'JPEG'
     bpy.context.scene.render.filepath = save_loc
     bpy.ops.render.render(write_still=1)
 

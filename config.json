@@ -1,14 +1,15 @@
 {
-  "version": 0.1,
+  "world_path": "world/open_world_2.hdr",
+
   "script_path": "src/drone_data_gen.py",
   "test_script_path": "",
   "drone_obj_path": "input/drone/drone.obj",
   "drone_obj_name": "drone_obj",
-  "drone_limits": [[8, 8, 8], [-8, -8, 1]],
+  "drone_limits": [[15, 15, 15], [-15, -15, 3]],
   "distance_limits": [2, 20],
   "elevation_limits": [0, 90],
   "rot_limits": [0, 360],
-  "dataset_size": 1,
+  "dataset_size": 1000,
 
   "rad": 0.25,
 
@@ -35,7 +36,7 @@
 
   "out_dir": "dataset",
   "data_out": "",
-  "out_resolution": [512, 512],
+  "out_resolution": [256, 256],
 
   "render_settings": {
     "engine": "CYCLES",

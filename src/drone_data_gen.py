@@ -25,6 +25,7 @@ if not os.path.exists(base_dir + "/data"):
     os.mkdir(base_dir + "/data")
 
 initiate_blender()
+add_world(config["world_path"])
 
 add_camera(config["cam_name"],
            config["cam_loc"],
@@ -36,12 +37,12 @@ v_fov, h_fov = get_fov(config["cam_name"])
 
 add_obj(config["drone_obj_path"], config["drone_obj_name"])
 
-add_single_light(config["light_name"],
-                 config["light_type"],
-                 config["light_loc"],
-                 config["light_energy"],
-                 config["light_color"],
-                 config["light_angle"])
+# add_single_light(config["light_name"],
+#                  config["light_type"],
+#                  config["light_loc"],
+#                  config["light_energy"],
+#                  config["light_color"],
+#                  config["light_angle"])
 
 data = np.asarray([["Distance", "ImgPath"]])
 csv_path = '/data/' + obj + '.csv'
@@ -66,7 +67,7 @@ for i in range(config["dataset_size"]):
 
     rotate_cam(config["cam_name"], [v_angle, h_angle])
 
-    img_path = 'images/' + obj + '_' + str(i + 1) + '.png'
+    img_path = 'images/' + obj + '_' + str(i + 1) + '.jpg'
     save_loc = base_dir + img_path
     render_surface_image(save_loc,
                          config["render_settings"])
