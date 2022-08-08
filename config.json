@@ -51,6 +51,7 @@
         "engine": "CYCLES",
         "samples": 256
     },
-    "dataset_name": "drone_08082022194938",
-    "max_distance": 15
+    "dataset_name": "drone_08082022221309",
+    "test_model": "model/drone_08082022210941.pth",
+    "max_distance": 30
 }
