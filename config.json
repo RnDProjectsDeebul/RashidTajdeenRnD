@@ -1,5 +1,5 @@
 {
-  "script_path": "src/drone_data_gen.py",
+  "script_path": "src/bpy_script.py",
 
   "object_name": "drone",
   "world_path": "world/open_world_2.hdr",
