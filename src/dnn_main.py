@@ -8,7 +8,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, random_split
 from torchvision import models
 
-with open("dnn_config.json") as f:
+with open("config.json") as f:
     config = json.load(f)
 
 dataset_name = config["dataset_name"]

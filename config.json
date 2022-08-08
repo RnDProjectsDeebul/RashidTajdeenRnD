@@ -26,6 +26,10 @@
 
   "render_settings": {
     "engine": "CYCLES",
-    "samples": 256
+    "samples": 256,
+
+
+  "dataset_name": "drone_07082022202017",
+  "max_distance": 15
   }
 }
