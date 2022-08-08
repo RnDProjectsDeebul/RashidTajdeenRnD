@@ -1,35 +1,56 @@
 {
-  "script_path": "src/bpy_script.py",
-
-  "object_name": "drone",
-  "world_path": "world/open_world_2.hdr",
-  "dataset_dir": "dataset",
-  "dataset_size": 2,
-  "out_resolution": [256, 256],
-
-  "distance_limits": [5, 30],
-  "elevation_limits": [0, 90],
-  "rotation_limits": [0, 360],
-
-  "cam_name": "camera",
-  "cam_loc": [0, 0, 0],
-  "cam_mode": "PERSP",
-  "cam_scale": 1,
-
-  "light_name": "light",
-  "light_type": "SUN",
-  "light_loc": [0, 0, 200],
-  "light_angle": [0, 0, 0],
-  "light_energy": 200,
-  "light_color": [1, 1, 1],
-  "light_rad": 0.1,
-
-  "render_settings": {
-    "engine": "CYCLES",
-    "samples": 256,
-
-
-  "dataset_name": "drone_07082022202017",
-  "max_distance": 15
-  }
+    "script_path": "src/bpy_script.py",
+    "object_name": "drone",
+    "world_path": "world/open_world_2.hdr",
+    "dataset_dir": "dataset",
+    "dataset_size": 2,
+    "out_resolution": [
+        256,
+        256
+    ],
+    "distance_limits": [
+        5,
+        30
+    ],
+    "elevation_limits": [
+        0,
+        90
+    ],
+    "rotation_limits": [
+        0,
+        360
+    ],
+    "cam_name": "camera",
+    "cam_loc": [
+        0,
+        0,
+        0
+    ],
+    "cam_mode": "PERSP",
+    "cam_scale": 1,
+    "light_name": "light",
+    "light_type": "SUN",
+    "light_loc": [
+        0,
+        0,
+        200
+    ],
+    "light_angle": [
+        0,
+        0,
+        0
+    ],
+    "light_energy": 200,
+    "light_color": [
+        1,
+        1,
+        1
+    ],
+    "light_rad": 0.1,
+    "render_settings": {
+        "engine": "CYCLES",
+        "samples": 256
+    },
+    "dataset_name": "drone_08082022194938",
+    "max_distance": 15
 }

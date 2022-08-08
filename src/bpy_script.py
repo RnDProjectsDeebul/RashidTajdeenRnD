@@ -66,3 +66,8 @@ for i in range(config["dataset_size"]):
     dist = math.sqrt(target_loc[0]**2 + target_loc[1]**2 + target_loc[2]**2)
     data = np.array([[dist, img_path]])
     write_data(base_dir + csv_path, data)
+
+config["dataset_name"] = config["object_name"] + '_' + timestamp
+with open("config.json", 'w') as f:
+    json.dump(config, f, indent=4)
+    print("\nUpdated field 'dataset_name' in configuration file to {}.\n".format(config["dataset_name"]))
