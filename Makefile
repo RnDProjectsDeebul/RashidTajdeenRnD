@@ -1,11 +1,14 @@
-gen_dataset:
-	python3 src/main.py
-
-test:
-	behave tests/sample_test.feature
+generate:
+	python3 src/main.py -generate
 
 train:
-	python3 src/train.py
+	python3 src/train.py -train
 
-validate:
-	python3 src/validate.py
+test:
+	python3 src/train.py -test
+
+generate-train:
+	python3 src/main.py -generate -train
+
+generate-test:
+	python3 src/main.py -generate -test
