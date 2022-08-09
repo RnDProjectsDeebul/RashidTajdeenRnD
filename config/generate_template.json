@@ -1,0 +1,35 @@
+{
+    "object_name": ["drone", "soccer_ball"],
+    "world_name": ["open_world_2"],
+    "dataset_size": 5,
+    "distance_limits": [
+        5,
+        10
+    ],
+    "script_path": "src/bpy_script.py",
+    "dataset_dir": "dataset",
+    "out_resolution": [
+        256,
+        256
+    ],
+    "elevation_limits": [
+        0,
+        90
+    ],
+    "rotation_limits": [
+        0,
+        360
+    ],
+    "cam_name": "camera",
+    "cam_loc": [
+        0,
+        0,
+        0
+    ],
+    "cam_mode": "PERSP",
+    "cam_scale": 1,
+    "render_settings": {
+        "engine": "CYCLES",
+        "samples": 256
+    }
+}
