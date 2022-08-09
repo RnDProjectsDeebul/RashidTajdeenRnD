@@ -1,9 +1,13 @@
+import math
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from torchvision import models
 from dnn_dataset import ImageDataset
 from torch.utils.data import DataLoader, random_split
+
+import neptune.new as neptune
 
 
 class TrainRegression:
@@ -27,6 +31,14 @@ class TrainRegression:
 
         self.optimizer = optim.Adam(self.model.parameters(), lr=0.001)
         self.criterion = nn.MSELoss()
+
+        self.logger = neptune.init(
+            project="rashidahamedmeeran.46/RashidTajdeenRnD",
+            api_token="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiI0M2Q0NzI2YS1hOGUxLTRiY2UtYjZkNS00NzhiOGY5ZjhhMTYifQ==",
+        )
+
+    def __del__(self):
+        self.logger.stop()
 
     def train(self, epochs=100, early_stopping=False, patience=5):
         model_save_loc = "model/" + self.dataset_name + ".pth"
@@ -53,6 +65,9 @@ class TrainRegression:
             print("Epoch: {}/{}.. ".format(e + 1, epochs),
                   "Training Loss: {:.3f}.. ".format(running_loss / len(self.trainloader)),
                   "Validation Loss: {:.3f}.. ".format(validation_loss / len(self.validloader)))
+
+            self.logger["Train/RunningLoss"].log(running_loss / len(self.trainloader))
+            self.logger["Train/ValidationLoss"].log(validation_loss / len(self.validloader))
 
             if early_stopping:
                 current_loss = validation_loss / len(self.validloader)
@@ -94,26 +109,42 @@ class TestRegression:
         self.max_distance = max_distance
         dataset = ImageDataset(csv_path, dataset_dir, target_scale=1. / self.max_distance)
 
-        self.testloader = DataLoader(dataset, batch_size=32, shuffle=False)
+        self.testloader = DataLoader(dataset, batch_size=1, shuffle=False)
 
         self.model = torch.load(model_path)
 
         self.optimizer = optim.Adam(self.model.parameters(), lr=0.001)
         self.criterion = nn.MSELoss()
 
+        self.logger = neptune.init(
+            project="rashidahamedmeeran.46/RashidTajdeenRnD",
+            api_token="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiI0M2Q0NzI2YS1hOGUxLTRiY2UtYjZkNS00NzhiOGY5ZjhhMTYifQ==",
+        )
+
+    def __del__(self):
+        self.logger.stop()
+
     def test(self):
         self.model.eval()
-        loss = 0
-
+        loss = 0.
         with torch.no_grad():
             for images, labels in iter(self.testloader):
 
                 output = self.model.forward(images.type(torch.float))
                 loss += self.criterion(output.type(torch.float), labels[:, None].type(torch.float)).item()
+                print("Predicted   :", output[:, 0].item() * self.max_distance)
+                print("Ground-Truth:", labels.item() * self.max_distance, '\n')
+                self.logger["Test/PredictedDistance"].log(output[:, 0].item() * self.max_distance)
+                self.logger["Test/TrueDistance"].log(labels.item() * self.max_distance)
 
-                print(output[:, 0] * self.max_distance)
-                print(labels * self.max_distance, '\n')
+            mse_loss = loss/len(self.testloader)
+            rmse_loss = math.sqrt(loss/len(self.testloader))
+            dist_loss = math.sqrt(loss/len(self.testloader)) * self.max_distance
+            print("\nMean Squared Loss: {}".format(mse_loss))
+            print("Root Mean Squared Loss: {}".format(rmse_loss))
+            print("Average error in predicted distance: {}".format(dist_loss))
+            self.logger["Test/MeanSquaredLoss"] = mse_loss
+            self.logger["Test/RootMeanSquaredLoss"] = rmse_loss
+            self.logger["Test/PredictedDistanceError"] = dist_loss
 
-            print("\nTest Loss: {}".format(loss))
-            print("Average error in predicted distance: {}".format(loss * self.max_distance))
 
