@@ -1,7 +1,5 @@
-import os
 import sys
 import subprocess
-import neptune.new as neptune
 import json
 
 from dnn_regression import TrainRegression, TestRegression
@@ -21,16 +19,6 @@ if __name__ == '__main__':
 
         script = str(config['script_path'])
         subprocess.run(["blender", "-b", "--python", script])
-
-        # Logging sample using neptune
-        # neptune = neptune.init(project="rashid.deutschland/Rashid-RnD",
-        #                        api_token="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vYXBwLm5lcHR1bmUuYWkiLCJhcGlfdXJsIjoiaHR0cHM6Ly9hcHAubmVwdHVuZS5haSIsImFwaV9rZXkiOiIyZDhmYjkzZC0xMGUwLTRkZjAtOGFjMC1kNGU3NzA3YmQ3ZjkifQ==",)
-        # params = {"learning_rate": 0.001, "optimizer": "Adam"}
-        # neptune["parameters"] = params
-        # for epoch in range(10):
-        #     neptune["train/loss"].log(0.9 ** epoch)
-        # neptune["eval/f1_score"] = 0.66
-        # neptune.stop()
 
     if '-train' in arguments:
 
