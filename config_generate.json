@@ -3,7 +3,7 @@
     "object_name": "drone",
     "world_path": "world/open_world_2.hdr",
     "dataset_dir": "dataset",
-    "dataset_size": 2,
+    "dataset_size": 100,
     "out_resolution": [
         256,
         256
@@ -51,7 +51,7 @@
         "engine": "CYCLES",
         "samples": 256
     },
-    "dataset_name": "drone_08082022221309",
+    "dataset_name": "drone_08082022210941",
     "test_model": "model/drone_08082022210941.pth",
     "max_distance": 30
 }
