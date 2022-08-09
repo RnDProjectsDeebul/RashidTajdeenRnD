@@ -100,7 +100,7 @@ class TrainRegression:
 
 
 class TestRegression:
-    def __init__(self, dataset_name, max_distance, model_path):
+    def __init__(self, dataset_name, max_distance, model_name):
         self.dataset_name = dataset_name
         object_name = self.dataset_name.split("_")[0]
         dataset_dir = "dataset/" + self.dataset_name + "/"
@@ -111,7 +111,7 @@ class TestRegression:
 
         self.testloader = DataLoader(dataset, batch_size=1, shuffle=False)
 
-        self.model = torch.load(model_path)
+        self.model = torch.load("model/" + model_name)
 
         self.optimizer = optim.Adam(self.model.parameters(), lr=0.001)
         self.criterion = nn.MSELoss()
@@ -140,9 +140,9 @@ class TestRegression:
             mse_loss = loss/len(self.testloader)
             rmse_loss = math.sqrt(loss/len(self.testloader))
             dist_loss = math.sqrt(loss/len(self.testloader)) * self.max_distance
-            print("\nMean Squared Loss: {}".format(mse_loss))
+            print("Mean Squared Loss: {}".format(mse_loss))
             print("Root Mean Squared Loss: {}".format(rmse_loss))
-            print("Average error in predicted distance: {}".format(dist_loss))
+            print("Average error in predicted distance: {}\n".format(dist_loss))
             self.logger["Test/MeanSquaredLoss"] = mse_loss
             self.logger["Test/RootMeanSquaredLoss"] = rmse_loss
             self.logger["Test/PredictedDistanceError"] = dist_loss

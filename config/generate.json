@@ -1,10 +1,25 @@
 {
-    "object_name": ["drone", "soccer_ball"],
-    "world_name": ["open_world_2"],
-    "dataset_size": 5,
+    "object_name": [
+        "drone_red",
+        "drone_black",
+        "soccer_ball",
+        "airplane",
+        "apple"
+    ],
+    "world_name": [
+        "open_world_day",
+        "open_world_night",
+        "city_day",
+        "city_night",
+        "stadium_day",
+        "forrest_day",
+        "beach_sunset",
+        "sea_sunset"
+    ],
+    "dataset_size": 10,
     "distance_limits": [
         5,
-        10
+        30
     ],
     "script_path": "src/bpy_script.py",
     "dataset_dir": "dataset",

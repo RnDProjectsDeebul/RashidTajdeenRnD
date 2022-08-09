@@ -11,8 +11,12 @@ from bpy_functions import *
 parent = os.path.dirname(current_dir)
 sys.path.append(parent)
 
-with open("config/generate.json") as f:
-    config = json.load(f)
+if os.path.exists("config/generate_override.json"):
+    with open("config/generate_override.json") as f:
+        config = json.load(f)
+else:
+    with open("config/generate.json") as f:
+        config = json.load(f)
 
 timestamp = datetime.now().strftime('%d%m%Y%H%M%S')
 base_dir = config["dataset_dir"] + '/' + config["object_name"][0] + '_' + timestamp + '/'
@@ -46,7 +50,7 @@ for i in range(config["dataset_size"]):
     target_loc = get_random_loc(config["distance_limits"], config["elevation_limits"], config["rotation_limits"])
     target_rot = randint(0, 360)
 
-    move_obj("drone_obj", target_loc, target_rot)
+    move_obj(config["object_name"][0] + "_obj", target_loc, target_rot)
     look_at(config["cam_name"], config["object_name"][0] + "_obj")
 
     rotate_cam(config["cam_name"])
