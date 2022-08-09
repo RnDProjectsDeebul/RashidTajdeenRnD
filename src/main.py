@@ -1,24 +1,48 @@
+import os
 import sys
 import subprocess
 import json
+import shutil
 
 from dnn_regression import TrainRegression, TestRegression
+from user_interface import UI
+
+
+def parse_arg(arguments):
+    if '-i' in arguments:
+        arguments.remove('-i')
+    if len(arguments):
+        for arg in arguments:
+            if arg not in ('-generate', '-train', '-test'):
+                print(">>> Invalid argument passed: '{}'".format(arg))
+                sys.exit(0)
+    else:
+        print(">>> No argument for operation passed <<<")
+        sys.exit(0)
 
 
 if __name__ == '__main__':
     arguments = sys.argv[1:]
-    for arg in arguments:
-        if arg not in ('-generate', '-train', '-test'):
-            print(">>> Invalid argument passed: '{}'".format(arg))
-            sys.exit(0)
+    parse_arg(arguments.copy())
+
+    user_interface = None
+    if '-i' in arguments:
+        user_interface = UI()
 
     if '-generate' in arguments:
+        if user_interface:
+            user_interface.generate()
+        else:
+            shutil.copyfile("config/generate_template.json", "config/generate.json")
 
-        with open("config_generate.json") as f:
+        with open("config/generate.json") as f:
             config = json.load(f)
 
         script = str(config['script_path'])
         subprocess.run(["blender", "-b", "--python", script])
+
+        if user_interface:
+            os.remove("config/generate.json")
 
     if '-train' in arguments:
 
