@@ -60,24 +60,20 @@ class TrainRegression:
                 running_loss += loss.item()
 
             self.model.eval()
-            with torch.no_grad():
-                validation_loss = self.validate()
             print("Epoch: {}/{}.. ".format(e + 1, epochs),
-                  "Training Loss: {:.3f}.. ".format(running_loss / len(self.trainloader)),
-                  "Validation Loss: {:.3f}.. ".format(validation_loss / len(self.validloader)))
+                  "Training Loss: {:.3f}.. ".format(running_loss / len(self.trainloader)))
 
             self.logger["Train/RunningLoss"].log(running_loss / len(self.trainloader))
-            self.logger["Train/ValidationLoss"].log(validation_loss / len(self.validloader))
 
             if early_stopping:
-                current_loss = validation_loss / len(self.validloader)
+                current_loss = running_loss / len(self.trainloader)
                 print('The Current Loss:', current_loss)
                 if current_loss > last_loss:
                     trigger_times += 1
                     print('Trigger Times:', trigger_times, '\n')
                     if trigger_times >= patience:
-                        print('Early stopping!\nStart to test process.')
-                        return self.model
+                        print('Early stopping!\n')
+                        break
                 else:
                     print('trigger times: 0', '\n')
                     trigger_times = 0
@@ -86,7 +82,12 @@ class TrainRegression:
             else:
                 torch.save(self.model, model_save_loc)
 
-        return self.model
+        with torch.no_grad():
+            validation_loss = self.validate()
+        print("Validation Loss: {:.3f}.. ".format(validation_loss / len(self.validloader)))
+        self.logger["Train/ValidationLoss"] = validation_loss / len(self.validloader)
+
+        return self.model, validation_loss
 
     def validate(self):
         self.model.eval()
