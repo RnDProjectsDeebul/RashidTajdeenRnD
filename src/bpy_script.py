@@ -42,7 +42,7 @@ set_resolution(config["out_resolution"])
 add_obj("object/" + config["object_name"][0] + ".obj", config["object_name"][0] + "_obj")
 
 data = np.asarray([["Distance", "ImgPath"]])
-csv_path = '/data/' + config["object_name"][0] + '.csv'
+csv_path = '/data/data.csv'
 write_data(base_dir + csv_path, data)
 
 for i in range(config["dataset_size"]):
@@ -55,7 +55,7 @@ for i in range(config["dataset_size"]):
 
     rotate_cam(config["cam_name"])
 
-    img_path = 'images/' + config["object_name"][0] + '_' + str(i + 1) + '.jpg'
+    img_path = 'images/' + f'{i+1:04d}' + '.jpg'
     save_loc = base_dir + img_path
     render_surface_image(save_loc,
                          config["render_settings"])

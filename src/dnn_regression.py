@@ -13,9 +13,8 @@ import neptune.new as neptune
 class TrainRegression:
     def __init__(self, dataset_name, max_distance):
         self.dataset_name = dataset_name
-        object_name = self.dataset_name.split("_")[0]
         dataset_dir = "dataset/" + self.dataset_name + "/"
-        csv_path = dataset_dir + "data/" + object_name + ".csv"
+        csv_path = dataset_dir + "data/data.csv"
 
         self.max_distance = max_distance
         dataset = ImageDataset(csv_path, dataset_dir, target_scale=1. / self.max_distance)
@@ -103,9 +102,8 @@ class TrainRegression:
 class TestRegression:
     def __init__(self, dataset_name, max_distance, model_name):
         self.dataset_name = dataset_name
-        object_name = self.dataset_name.split("_")[0]
         dataset_dir = "dataset/" + self.dataset_name + "/"
-        csv_path = dataset_dir + "data/" + object_name + ".csv"
+        csv_path = dataset_dir + "data/data.csv"
 
         self.max_distance = max_distance
         dataset = ImageDataset(csv_path, dataset_dir, target_scale=1. / self.max_distance)
