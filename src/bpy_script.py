@@ -18,8 +18,7 @@ else:
     with open("config/generate.json") as f:
         config = json.load(f)
 
-timestamp = datetime.now().strftime('%d%m%Y%H%M%S')
-base_dir = config["dataset_dir"] + '/' + config["object_name"][0] + '_' + timestamp + '/'
+base_dir = config["dataset_dir"] + '/' + config["dataset_name"] + '/'
 
 if not os.path.exists(config["dataset_dir"]):
     os.mkdir(config["dataset_dir"])
@@ -33,13 +32,16 @@ if not os.path.exists(base_dir + "/data"):
 initiate_blender()
 add_world("world/" + config["world_name"][0] + ".hdr")
 
-add_camera(config["cam_name"],
-           config["cam_loc"],
-           config["cam_mode"],
-           config["cam_scale"])
+camera = add_camera(config["cam_name"],
+                    config["cam_loc"],
+                    config["cam_mode"],
+                    config["cam_scale"])
 set_resolution(config["out_resolution"])
 
-add_obj("object/" + config["object_name"][0] + ".obj", config["object_name"][0] + "_obj")
+add_obj("object/" + config["object_name"][0][0] + ".obj", config["object_name"][0][0] + "_obj")
+
+if len(config["object_name"][1]) > 0:
+    add_obj("object/" + config["object_name"][1][0] + ".obj", config["object_name"][1][0] + "_dummy_obj")
 
 data = np.asarray([["Distance", "ImgPath"]])
 csv_path = '/data/data.csv'
@@ -50,10 +52,13 @@ for i in range(config["dataset_size"]):
     target_loc = get_random_loc(config["distance_limits"], config["elevation_limits"], config["rotation_limits"])
     target_rot = randint(0, 360)
 
-    move_obj(config["object_name"][0] + "_obj", target_loc, target_rot)
-    look_at(config["cam_name"], config["object_name"][0] + "_obj")
+    move_obj(config["object_name"][0][0] + "_obj", target_loc, target_rot)
+    look_at(config["cam_name"], config["object_name"][0][0] + "_obj")
 
     rotate_cam(config["cam_name"])
+
+    if len(config["object_name"][1]) > 0:
+        move_obj_into_camera_view(config["object_name"][1][0] + "_dummy_obj", camera, config["distance_limits"])
 
     img_path = 'images/' + f'{i+1:04d}' + '.jpg'
     save_loc = base_dir + img_path

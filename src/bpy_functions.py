@@ -1,6 +1,8 @@
 import bpy
 import numpy as np
 import math
+from mathutils import Vector, Matrix
+import random
 from random import randint
 
 
@@ -98,6 +100,44 @@ def move_obj(obj, target_loc, target_rot):
     obj.location = target_loc
     obj.rotation_euler[2] = math.radians(target_rot)
 
+
+def move_obj_into_camera_view(obj, camera, limits):
+    min_z, max_z = limits[0]*2, limits[1]*2
+
+    # Base object for duplication
+    obj = bpy.data.objects[obj]
+
+    render = bpy.context.scene.render
+    aspect = (render.resolution_x * render.pixel_aspect_x) / \
+             (render.resolution_y * render.pixel_aspect_y)
+    view_frame = camera.data.view_frame()
+    frame = [-f/view_frame[0].z for f in view_frame]
+    if aspect > 1:
+        mat = Matrix.Diagonal((1, 1/aspect, 1),)
+    else:
+        mat = Matrix.Diagonal((aspect, 1, 1), )
+    for i in range(len(frame)):
+        frame[i] = mat @ frame[i]
+
+
+    # frame = camera_normalized_frame2(camera)
+
+    v = Vector([random.uniform(-1, 1) * frame[0].x,
+                random.uniform(-1, 1) * frame[0].y,
+                frame[0].z])
+    # distance = max_z * math.sqrt(random.uniform(math.pow(min_z / max_z, 1), 1))
+    distance = randint(min_z, max_z)
+    print(distance)
+    loc_w = camera.matrix_world @ (distance * v)
+
+    obj.select_set(True)
+    print(loc_w)
+    obj.location = loc_w
+    # bpy.ops.object.duplicate_move_linked(TRANSFORM_OT_translate={"value": loc_w})
+    bpy.ops.object.select_all(action='DESELECT')
+
+    # obj.hide_set(True)
+    bpy.context.view_layer.objects.active = camera
 
 def add_camera(name, loc, cam_type, scale):
     """
