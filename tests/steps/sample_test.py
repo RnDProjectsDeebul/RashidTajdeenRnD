@@ -5,7 +5,8 @@ import subprocess
 import shutil
 import json
 
-sys.path.append("/home/rashid/rnd/RashidTajdeenRnD/src")
+currentdir = os.getcwd()
+sys.path.append(currentdir + "/src")
 from dnn_regression import TrainRegression, TestRegression
 
 
