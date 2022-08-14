@@ -1,0 +1,5 @@
+{
+    "dataset_name": "default",
+    "test_model": "train_reddrone_2_50.pth",
+    "max_distance": 50
+}

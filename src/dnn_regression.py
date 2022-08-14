@@ -4,18 +4,18 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torchvision import models
-from dnn_dataset import ImageDataset
 from torch.utils.data import DataLoader, random_split
 
 import neptune.new as neptune
+
+from dnn_dataset import ImageDataset
 
 
 class TrainRegression:
     def __init__(self, dataset_name, max_distance):
         self.dataset_name = dataset_name
-        object_name = self.dataset_name.split("_")[0]
         dataset_dir = "dataset/" + self.dataset_name + "/"
-        csv_path = dataset_dir + "data/" + object_name + ".csv"
+        csv_path = dataset_dir + "data/data.csv"
 
         self.max_distance = max_distance
         dataset = ImageDataset(csv_path, dataset_dir, target_scale=1. / self.max_distance)
@@ -60,24 +60,20 @@ class TrainRegression:
                 running_loss += loss.item()
 
             self.model.eval()
-            with torch.no_grad():
-                validation_loss = self.validate()
             print("Epoch: {}/{}.. ".format(e + 1, epochs),
-                  "Training Loss: {:.3f}.. ".format(running_loss / len(self.trainloader)),
-                  "Validation Loss: {:.3f}.. ".format(validation_loss / len(self.validloader)))
+                  "Training Loss: {:.3f}.. ".format(running_loss / len(self.trainloader)))
 
             self.logger["Train/RunningLoss"].log(running_loss / len(self.trainloader))
-            self.logger["Train/ValidationLoss"].log(validation_loss / len(self.validloader))
 
             if early_stopping:
-                current_loss = validation_loss / len(self.validloader)
+                current_loss = running_loss / len(self.trainloader)
                 print('The Current Loss:', current_loss)
                 if current_loss > last_loss:
                     trigger_times += 1
                     print('Trigger Times:', trigger_times, '\n')
                     if trigger_times >= patience:
-                        print('Early stopping!\nStart to test process.')
-                        return self.model
+                        print('Early stopping!\n')
+                        break
                 else:
                     print('trigger times: 0', '\n')
                     trigger_times = 0
@@ -86,7 +82,12 @@ class TrainRegression:
             else:
                 torch.save(self.model, model_save_loc)
 
-        return self.model
+        with torch.no_grad():
+            validation_loss = self.validate()
+        print("Validation Loss: {:.3f}.. ".format(validation_loss / len(self.validloader)))
+        self.logger["Train/ValidationLoss"] = validation_loss / len(self.validloader)
+
+        return self.model, validation_loss
 
     def validate(self):
         self.model.eval()
@@ -100,18 +101,17 @@ class TrainRegression:
 
 
 class TestRegression:
-    def __init__(self, dataset_name, max_distance, model_path):
-        self.dataset_name = dataset_name
-        object_name = self.dataset_name.split("_")[0]
+    def __init__(self, config):
+        self.dataset_name = config["dataset_name"]
         dataset_dir = "dataset/" + self.dataset_name + "/"
-        csv_path = dataset_dir + "data/" + object_name + ".csv"
+        csv_path = dataset_dir + "data/data.csv"
 
-        self.max_distance = max_distance
+        self.max_distance = config["max_distance"]
         dataset = ImageDataset(csv_path, dataset_dir, target_scale=1. / self.max_distance)
 
         self.testloader = DataLoader(dataset, batch_size=1, shuffle=False)
 
-        self.model = torch.load(model_path)
+        self.model = torch.load("model/" + config["test_model"])
 
         self.optimizer = optim.Adam(self.model.parameters(), lr=0.001)
         self.criterion = nn.MSELoss()
@@ -140,11 +140,13 @@ class TestRegression:
             mse_loss = loss/len(self.testloader)
             rmse_loss = math.sqrt(loss/len(self.testloader))
             dist_loss = math.sqrt(loss/len(self.testloader)) * self.max_distance
-            print("\nMean Squared Loss: {}".format(mse_loss))
+            print("Mean Squared Loss: {}".format(mse_loss))
             print("Root Mean Squared Loss: {}".format(rmse_loss))
-            print("Average error in predicted distance: {}".format(dist_loss))
+            print("Average error in predicted distance: {}\n".format(dist_loss))
             self.logger["Test/MeanSquaredLoss"] = mse_loss
             self.logger["Test/RootMeanSquaredLoss"] = rmse_loss
             self.logger["Test/PredictedDistanceError"] = dist_loss
+
+        return mse_loss, rmse_loss, dist_loss
 
 
