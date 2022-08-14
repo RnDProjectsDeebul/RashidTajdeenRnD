@@ -60,6 +60,11 @@ def step_impl(context):
     context.generate_config["camera_blur"] = True
 
 
+@given(u'the environment is night')
+def step_impl(context):
+    context.generate_config["world_name"] = ["open_world_night"]
+
+
 @when(u'we have images for the scenario')
 def step_impl(context):
     generate(context)
