@@ -1,10 +1,11 @@
 {
-    "object_name": [
+    "object_name": [[
         "drone_red",
         "drone_black",
         "soccer_ball",
         "airplane",
         "apple"
+    ], []
     ],
     "world_name": [
         "open_world_day",
@@ -18,9 +19,10 @@
     ],
     "dataset_size": 10,
     "distance_limits": [
-        5,
-        30
+        2,
+        50
     ],
+    "dataset_name": "default",
     "script_path": "src/bpy_script.py",
     "dataset_dir": "dataset",
     "out_resolution": [
