@@ -24,12 +24,12 @@ def test(context, dataset_name=None, max_distance=None, test_model=None):
     context.mse_loss, context.rmse_loss, context.dist_loss = tester.test()
 
 
-def generate(context, object_name=None, dataset_size=None, distance_limits=None, dataset_name=None):
+def generate(context, object_name=None, additional_object_name=[], dataset_size=None, distance_limits=None, dataset_name=None):
     with open("config/generate.json") as f:
         custom_config = json.load(f)
 
     if object_name:
-        custom_config["object_name"] = [object_name]
+        custom_config["object_name"] = [object_name, additional_object_name]
     if dataset_size:
         custom_config["dataset_size"] = dataset_size
     if distance_limits:
@@ -50,6 +50,7 @@ def generate(context, object_name=None, dataset_size=None, distance_limits=None,
 def step_impl(context):
     generate(context,
              object_name=["drone_red"],
+             additional_object_name=[],
              dataset_size=10,
              distance_limits=[2, 50],
              dataset_name="generated_data")
@@ -59,6 +60,7 @@ def step_impl(context):
 def step_impl(context):
     generate(context,
              object_name=["drone_red"],
+             additional_object_name=[],
              dataset_size=10,
              distance_limits=[0, 2],
              dataset_name="generated_data")
@@ -68,6 +70,7 @@ def step_impl(context):
 def step_impl(context):
     generate(context,
              object_name=["drone_red"],
+             additional_object_name=[],
              dataset_size=10,
              distance_limits=[50, 100],
              dataset_name="generated_data")
@@ -77,6 +80,17 @@ def step_impl(context):
 def step_impl(context):
     generate(context,
              object_name=["drone_red"],
+             additional_object_name=[],
+             dataset_size=10,
+             distance_limits=[2, 50],
+             dataset_name="generated_data")
+
+
+@given(u'we have generated images of red drone at varying distance 5-30 meters, and additional red drone')
+def step_impl(context):
+    generate(context,
+             object_name=["drone_red"],
+             additional_object_name=["drone_red"],
              dataset_size=10,
              distance_limits=[2, 50],
              dataset_name="generated_data")
