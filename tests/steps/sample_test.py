@@ -40,6 +40,11 @@ def step_impl(context):
     context.generate_config["object_name"][1] = ["drone_red"]
 
 
+@given(u'the scenario has an additional black drone')
+def step_impl(context):
+    context.generate_config["object_name"][1] = ["drone_black"]
+
+
 @given(u'the varying distance is 2-50 meters')
 def step_impl(context):
     context.generate_config["distance_limits"] = [2, 50]

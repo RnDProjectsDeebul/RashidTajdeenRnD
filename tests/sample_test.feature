@@ -37,6 +37,14 @@ Scenario: Correct drone at correct distance with additional correct drone
 	And we predict the distance with the model trained on red drone from 2-50 meters
 	Then the rmse loss is expected to be higher than 0.15
 
+Scenario: Correct drone at correct distance with additional different drone
+    Given the scenario has red drone
+    And the scenario has an additional black drone
+    And the varying distance is 2-50 meters
+	When we have images for the scenario
+	And we predict the distance with the model trained on red drone from 2-50 meters
+	Then the rmse loss is expected to be higher than 0.15
+
 Scenario: Correct drone at correct distance with camera out-of-focus
     Given the scenario has red drone
     And the varying distance is 2-50 meters
