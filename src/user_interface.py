@@ -88,7 +88,6 @@ class UI:
             print("## Entered option is invalid. Aborting.")
             sys.exit(0)
 
-
         # Getting user input for the environment choice
         print("## \tEnvironments available :")
         for i, obj in enumerate(custom_config["world_name"]):
@@ -105,6 +104,17 @@ class UI:
             sys.exit(0)
         world_name = custom_config["world_name"][int(world_num)-1]
 
+        # Getting user input for enabling camera blur
+        camera_blur = input("## Do you want to add camera blur [No] (y/n): ")
+        if camera_blur in ("Y", "y", "yes", "YES", "Yes"):
+            camera_blur = True
+        elif camera_blur in ("N", "n", "no", "NO", "No", ""):
+            camera_blur = False
+        else:
+            print("## Entered option is invalid. Aborting.")
+            sys.exit(0)
+
+        # Getting user input for the name of the dataset to be generated
         dataset_name = input("## Name of the dataset to be created [{}]: ".format(custom_config["dataset_name"]))
         if dataset_name == "":
             dataset_name = (custom_config["dataset_name"])
@@ -116,6 +126,7 @@ class UI:
         if additional_obj in ("Y", "y", "yes", "YES", "Yes"):
             custom_config["object_name"][1] = [additional_obj_name]
         custom_config["world_name"] = [world_name]
+        custom_config["camera_blur"] = camera_blur
         custom_config["dataset_name"] = dataset_name
 
         with open("config/generate_override.json", 'w+') as f:

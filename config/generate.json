@@ -23,6 +23,7 @@
         50
     ],
     "dataset_name": "generated_data",
+    "camera_blur": false,
     "script_path": "src/bpy_script.py",
     "dataset_dir": "dataset",
     "out_resolution": [

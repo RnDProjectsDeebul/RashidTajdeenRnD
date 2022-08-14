@@ -158,6 +158,11 @@ def add_camera(name, loc, cam_type, scale):
     return cam_object
 
 
+def add_camera_blur(cam_object):
+    cam_object.data.dof.use_dof = True
+    cam_object.data.dof.focus_distance = 1.
+
+
 def set_resolution(res):
     bpy.context.scene.render.resolution_x = res[0]
     bpy.context.scene.render.resolution_y = res[1]

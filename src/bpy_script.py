@@ -37,6 +37,8 @@ camera = add_camera(config["cam_name"],
                     config["cam_mode"],
                     config["cam_scale"])
 set_resolution(config["out_resolution"])
+if config["camera_blur"]:
+    add_camera_blur(camera)
 
 add_obj("object/" + config["object_name"][0][0] + ".obj", config["object_name"][0][0] + "_obj")
 
