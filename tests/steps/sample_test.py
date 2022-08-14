@@ -55,7 +55,7 @@ def step_impl(context):
     context.generate_config["distance_limits"] = [50, 100]
 
 
-@when(u'we generate images for the scenario')
+@when(u'we have images for the scenario')
 def step_impl(context):
     generate(context)
 
