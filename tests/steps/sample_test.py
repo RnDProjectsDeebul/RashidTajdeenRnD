@@ -55,6 +55,11 @@ def step_impl(context):
     context.generate_config["distance_limits"] = [50, 100]
 
 
+@given(u'the camera is out-of-focus')
+def step_impl(context):
+    context.generate_config["camera_blur"] = True
+
+
 @when(u'we have images for the scenario')
 def step_impl(context):
     generate(context)
