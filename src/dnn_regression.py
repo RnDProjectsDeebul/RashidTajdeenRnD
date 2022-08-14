@@ -4,10 +4,11 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torchvision import models
-from dnn_dataset import ImageDataset
 from torch.utils.data import DataLoader, random_split
 
 import neptune.new as neptune
+
+from dnn_dataset import ImageDataset
 
 
 class TrainRegression:
@@ -100,17 +101,17 @@ class TrainRegression:
 
 
 class TestRegression:
-    def __init__(self, dataset_name, max_distance, model_name):
-        self.dataset_name = dataset_name
+    def __init__(self, config):
+        self.dataset_name = config["dataset_name"]
         dataset_dir = "dataset/" + self.dataset_name + "/"
         csv_path = dataset_dir + "data/data.csv"
 
-        self.max_distance = max_distance
+        self.max_distance = config["max_distance"]
         dataset = ImageDataset(csv_path, dataset_dir, target_scale=1. / self.max_distance)
 
         self.testloader = DataLoader(dataset, batch_size=1, shuffle=False)
 
-        self.model = torch.load("model/" + model_name)
+        self.model = torch.load("model/" + config["test_model"])
 
         self.optimizer = optim.Adam(self.model.parameters(), lr=0.001)
         self.criterion = nn.MSELoss()
@@ -145,5 +146,7 @@ class TestRegression:
             self.logger["Test/MeanSquaredLoss"] = mse_loss
             self.logger["Test/RootMeanSquaredLoss"] = rmse_loss
             self.logger["Test/PredictedDistanceError"] = dist_loss
+
+        return mse_loss, rmse_loss, dist_loss
 
 

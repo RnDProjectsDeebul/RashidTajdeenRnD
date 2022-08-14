@@ -74,7 +74,7 @@ if __name__ == '__main__':
             with open("config/test.json") as f:
                 test_config = json.load(f)
 
-        tester = TestRegression(test_config["dataset_name"], test_config["max_distance"], test_config["test_model"])
+        tester = TestRegression(test_config)
         tester.test()
 
         if os.path.exists("config/test_override.json"):
