@@ -22,7 +22,7 @@
         2,
         50
     ],
-    "dataset_name": "default",
+    "dataset_name": "generated_data",
     "script_path": "src/bpy_script.py",
     "dataset_dir": "dataset",
     "out_resolution": [
