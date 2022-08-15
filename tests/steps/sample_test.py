@@ -37,13 +37,13 @@ def step_impl(context):
 
 @given(u'the scenario has an additional red drone')
 def step_impl(context):
-    context.generate_config["additional_object"] = True
+    context.generate_config["additional_object"] = [True]
     context.generate_config["additional_object_name"] = ["drone_red"]
 
 
 @given(u'the scenario has an additional black drone')
 def step_impl(context):
-    context.generate_config["additional_object"] = True
+    context.generate_config["additional_object"] = [True]
     context.generate_config["additional_object_name"] = ["drone_black"]
 
 

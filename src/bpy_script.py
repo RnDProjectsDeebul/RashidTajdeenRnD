@@ -37,12 +37,12 @@ camera = add_camera(config["cam_name"],
                     config["cam_mode"],
                     config["cam_scale"])
 set_resolution(config["out_resolution"])
-if config["camera_blur"]:
+if config["camera_blur"][0]:
     add_camera_blur(camera)
 
 add_obj("object/" + config["object_name"][0] + ".obj", config["object_name"][0] + "_obj")
 
-if config["additional_object"]:
+if config["additional_object"][0]:
     add_obj("object/" + config["additional_object_name"][0] + ".obj", config["additional_object_name"][0] + "_dummy_obj")
 
 data = np.asarray([["Distance", "ImgPath"]])
@@ -59,7 +59,7 @@ for i in range(config["dataset_size"]):
 
     rotate_cam(config["cam_name"])
 
-    if config["additional_object"]:
+    if config["additional_object"][0]:
         move_obj_into_camera_view(config["additional_object_name"][0] + "_dummy_obj", camera, config["distance_limits"])
 
     img_path = 'images/' + f'{i+1:04d}' + '.jpg'
