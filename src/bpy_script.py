@@ -37,11 +37,13 @@ camera = add_camera(config["cam_name"],
                     config["cam_mode"],
                     config["cam_scale"])
 set_resolution(config["out_resolution"])
+if config["camera_blur"][0]:
+    add_camera_blur(camera)
 
-add_obj("object/" + config["object_name"][0][0] + ".obj", config["object_name"][0][0] + "_obj")
+add_obj("object/" + config["object_name"][0] + ".obj", config["object_name"][0] + "_obj")
 
-if len(config["object_name"][1]) > 0:
-    add_obj("object/" + config["object_name"][1][0] + ".obj", config["object_name"][1][0] + "_dummy_obj")
+if config["additional_object"][0]:
+    add_obj("object/" + config["additional_object_name"][0] + ".obj", config["additional_object_name"][0] + "_dummy_obj")
 
 data = np.asarray([["Distance", "ImgPath"]])
 csv_path = '/data/data.csv'
@@ -52,13 +54,13 @@ for i in range(config["dataset_size"]):
     target_loc = get_random_loc(config["distance_limits"], config["elevation_limits"], config["rotation_limits"])
     target_rot = randint(0, 360)
 
-    move_obj(config["object_name"][0][0] + "_obj", target_loc, target_rot)
-    look_at(config["cam_name"], config["object_name"][0][0] + "_obj")
+    move_obj(config["object_name"][0] + "_obj", target_loc, target_rot)
+    look_at(config["cam_name"], config["object_name"][0] + "_obj")
 
     rotate_cam(config["cam_name"])
 
-    if len(config["object_name"][1]) > 0:
-        move_obj_into_camera_view(config["object_name"][1][0] + "_dummy_obj", camera, config["distance_limits"])
+    if config["additional_object"][0]:
+        move_obj_into_camera_view(config["additional_object_name"][0] + "_dummy_obj", camera, config["distance_limits"])
 
     img_path = 'images/' + f'{i+1:04d}' + '.jpg'
     save_loc = base_dir + img_path

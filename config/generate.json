@@ -1,11 +1,15 @@
 {
-    "object_name": [[
+    "object_name": [
         "drone_red",
-        "drone_black",
-        "soccer_ball",
-        "airplane",
-        "apple"
-    ], []
+        "drone_black"
+    ],
+    "additional_object": [
+        false,
+        true
+    ],
+    "additional_object_name": [
+        "drone_red",
+        "drone_black"
     ],
     "world_name": [
         "open_world_day",
@@ -22,7 +26,11 @@
         2,
         50
     ],
-    "dataset_name": "default",
+    "camera_blur": [
+        false,
+        true
+    ],
+    "dataset_name": "generated_data",
     "script_path": "src/bpy_script.py",
     "dataset_dir": "dataset",
     "out_resolution": [

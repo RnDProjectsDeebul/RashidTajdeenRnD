@@ -1,5 +1,6 @@
 import os
 import shutil
+import json
 
 
 def before_scenario(context, scenario):
@@ -8,6 +9,11 @@ def before_scenario(context, scenario):
         return
     if os.path.exists("dataset/generated_data/"):
         shutil.rmtree("dataset/generated_data/")
+
+    with open("config/generate.json") as f:
+        context.generate_config = json.load(f)
+    with open("config/test.json") as f:
+        context.test_config = json.load(f)
 
 
 def after_scenario(context, scenario):
