@@ -51,38 +51,40 @@ class UI:
 
         # Getting user input for the object choice
         print("## \tObjects available :")
-        for i, obj in enumerate(custom_config["object_name"][0]):
+        for i, obj in enumerate(custom_config["object_name"]):
             print("## \t\t>", i+1, " : ", obj)
         obj_num = input("## Choose a number corresponding to an object above [1 : {}]: "
-                        .format(custom_config["object_name"][0][0]))
+                        .format(custom_config["object_name"][0]))
         if obj_num == "":
             obj_num = 1
         elif not obj_num.isnumeric():
             print("## Non-integer value provided. Aborting.")
             sys.exit(0)
-        elif (int(obj_num) > len(custom_config["object_name"][0])) or (int(obj_num) == 0):
+        elif (int(obj_num) > len(custom_config["object_name"])) or (int(obj_num) == 0):
             print("## Entered option is invalid. Aborting.")
             sys.exit(0)
-        obj_name = custom_config["object_name"][0][int(obj_num)-1]
+        obj_name = custom_config["object_name"][int(obj_num)-1]
 
         # Getting user input for the additional object choice
         additional_obj = input("## Do you want to have an additional object on the scene [No] (y/n): ")
         if additional_obj in ("Y", "y", "yes", "YES", "Yes"):
+            additional_obj = True
             print("## \tAdditional Objects available :")
-            for i, obj in enumerate(custom_config["object_name"][0]):
+            for i, obj in enumerate(custom_config["additional_object_name"]):
                 print("## \t\t>", i+1, " : ", obj)
             additional_obj_num = input("## Choose a number corresponding to an object above [1 : {}]: "
-                            .format(custom_config["object_name"][0][0]))
+                                       .format(custom_config["additional_object_name"][0]))
             if additional_obj_num == "":
                 additional_obj_num = 1
             elif not additional_obj_num.isnumeric():
                 print("## Non-integer value provided. Aborting.")
                 sys.exit(0)
-            elif (int(additional_obj_num) > len(custom_config["object_name"][0])) or (int(additional_obj_num) == 0):
+            elif (int(additional_obj_num) > len(custom_config["additional_object_name"])) or (int(additional_obj_num) == 0):
                 print("## Entered option is invalid. Aborting.")
                 sys.exit(0)
-            additional_obj_name = custom_config["object_name"][0][int(additional_obj_num)-1]
+            additional_obj_name = custom_config["additional_object_name"][int(additional_obj_num)-1]
         elif additional_obj in ("N", "n", "no", "NO", "No", ""):
+            additional_obj = False
             additional_obj_name = None
         else:
             print("## Entered option is invalid. Aborting.")
@@ -122,9 +124,12 @@ class UI:
         custom_config["dataset_size"] = int(dataset_size)
         custom_config["distance_limits"][0] = int(min_dist)
         custom_config["distance_limits"][1] = int(max_dist)
-        custom_config["object_name"][0] = [obj_name]
-        if additional_obj in ("Y", "y", "yes", "YES", "Yes"):
-            custom_config["object_name"][1] = [additional_obj_name]
+        custom_config["object_name"] = [obj_name]
+        if additional_obj:
+            custom_config["additional_object"] = True
+            custom_config["additional_object_name"] = [additional_obj_name]
+        else:
+            custom_config["additional_object"] = False
         custom_config["world_name"] = [world_name]
         custom_config["camera_blur"] = camera_blur
         custom_config["dataset_name"] = dataset_name

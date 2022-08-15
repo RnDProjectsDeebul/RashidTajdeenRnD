@@ -1,11 +1,18 @@
 {
-    "object_name": [[
+    "object_name": [
         "drone_red",
         "drone_black",
         "soccer_ball",
         "airplane",
         "apple"
-    ], []
+    ],
+    "additional_object": false,
+    "additional_object_name": [
+        "drone_red",
+        "drone_black",
+        "soccer_ball",
+        "airplane",
+        "apple"
     ],
     "world_name": [
         "open_world_day",

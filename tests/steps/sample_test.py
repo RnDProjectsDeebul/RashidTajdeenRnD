@@ -27,22 +27,24 @@ def generate(context):
 
 @given(u'the scenario has red drone')
 def step_impl(context):
-    context.generate_config["object_name"][0] = ["drone_red"]
+    context.generate_config["object_name"] = ["drone_red"]
 
 
 @given(u'the scenario has black drone')
 def step_impl(context):
-    context.generate_config["object_name"][0] = ["drone_black"]
+    context.generate_config["object_name"] = ["drone_black"]
 
 
 @given(u'the scenario has an additional red drone')
 def step_impl(context):
-    context.generate_config["object_name"][1] = ["drone_red"]
+    context.generate_config["additional_object"] = True
+    context.generate_config["additional_object_name"] = ["drone_red"]
 
 
 @given(u'the scenario has an additional black drone')
 def step_impl(context):
-    context.generate_config["object_name"][1] = ["drone_black"]
+    context.generate_config["additional_object"] = True
+    context.generate_config["additional_object_name"] = ["drone_black"]
 
 
 @given(u'the varying distance is 2-50 meters')
