@@ -59,6 +59,15 @@ def add_obj(obj_location, obj_name):
     bpy.ops.import_scene.obj(filepath=obj_location)
     imported_object = bpy.context.selected_objects[0]
     imported_object.name = obj_name
+    return imported_object
+
+
+def change_obj_visibitity(obj, flag):
+    obj.hide_render = flag
+
+
+def remove_obj(obj):
+    bpy.data.objects.remove(obj, do_unlink=True)
 
 
 def add_fbx(obj_location, obj_name):
@@ -127,11 +136,9 @@ def move_obj_into_camera_view(obj, camera, limits):
                 frame[0].z])
     # distance = max_z * math.sqrt(random.uniform(math.pow(min_z / max_z, 1), 1))
     distance = randint(min_z, max_z)
-    print(distance)
     loc_w = camera.matrix_world @ (distance * v)
 
     obj.select_set(True)
-    print(loc_w)
     obj.location = loc_w
     # bpy.ops.object.duplicate_move_linked(TRANSFORM_OT_translate={"value": loc_w})
     bpy.ops.object.select_all(action='DESELECT')
@@ -158,10 +165,12 @@ def add_camera(name, loc, cam_type, scale):
     return cam_object
 
 
-def add_camera_blur(cam_object):
-    cam_object.data.dof.use_dof = True
-    cam_object.data.dof.focus_distance = 1.
-
+def change_camera_blur(cam_object, option):
+    if option:
+        cam_object.data.dof.use_dof = True
+        cam_object.data.dof.focus_distance = 1.
+    else:
+        cam_object.data.dof.use_dof = False
 
 def set_resolution(res):
     bpy.context.scene.render.resolution_x = res[0]

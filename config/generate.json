@@ -21,7 +21,7 @@
         "beach_sunset",
         "sea_sunset"
     ],
-    "dataset_size": 10,
+    "dataset_size": 1,
     "distance_limits": [
         2,
         50
