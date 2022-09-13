@@ -256,6 +256,49 @@ def rotate_cam(cam_obj):
     bpy.ops.transform.rotate(ov, value=h_angle, orient_axis='Z', orient_type='LOCAL')
 
 
+def bounding_box_data(cam, obj):
+    mat = cam.matrix_world.normalized().inverted()
+    me = obj.to_mesh(preserve_all_data_layers=True, depsgraph=bpy.context.evaluated_depsgraph_get())
+    me.transform(obj.matrix_world)
+    me.transform(mat)
+
+    camera = cam.data
+    frame = [-v for v in camera.view_frame(scene=scene)[:3]]
+    camera_persp = camera.type != 'ORTHO'
+
+    lx = []
+    ly = []
+
+    for v in me.vertices:
+        co_local = v.co
+        z = -co_local.z
+
+        if camera_persp:
+            if z == 0.0:
+                lx.append(0.5)
+                ly.append(0.5)
+            # if z <= 0.0:
+            #     continue
+            else:
+                frame = [(v / (v.z / z)) for v in frame]
+
+        min_x, max_x = frame[1].x, frame[2].x
+        min_y, max_y = frame[0].y, frame[1].y
+
+        x = (co_local.x - min_x) / (max_x - min_x)
+        y = (co_local.y - min_y) / (max_y - min_y)
+
+        lx.append(x)
+        ly.append(y)
+
+    min_x = max(0.0, min(min(lx), 1.0))
+    max_x = max(0.0, min(max(lx), 1.0))
+    min_y = 1 - max(0.0, min(max(ly), 1.0))
+    max_y = 1 - max(0.0, min(min(ly), 1.0))
+
+    return min_x, min_y, max_x, max_y
+
+
 def write_data(data_loc, data):
     with open(data_loc, 'a') as csvfile:
         np.savetxt(csvfile, data, delimiter=",", fmt="%s")

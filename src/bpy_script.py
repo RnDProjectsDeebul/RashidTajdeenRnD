@@ -29,7 +29,7 @@ if not os.path.exists(base_dir + "/images"):
 if not os.path.exists(base_dir + "/data"):
     os.mkdir(base_dir + "/data")
 
-data = np.asarray([["Distance", "ImgPath"]])
+data = np.asarray([["Distance", "ImgPath", "Box_min_x", "Box_min_y", "Box_max_x", "Box_max_y"]])
 csv_path = '/data/data.csv'
 write_data(base_dir + csv_path, data)
 
@@ -85,11 +85,12 @@ for main_obj in main_objects:
 
                         img_path = 'images/' + f'{img_count:04d}' + '.jpg'
                         save_loc = base_dir + img_path
+                        min_x, min_y, max_x, max_y = bounding_box_data(camera, main_obj)
                         render_surface_image(save_loc,
                                              config["render_settings"])
 
                         dist = math.sqrt(target_loc[0]**2 + target_loc[1]**2 + target_loc[2]**2)
-                        data = np.array([[dist, img_path]])
+                        data = np.array([[dist, img_path, min_x, min_y, max_x, max_y]])
                         write_data(base_dir + csv_path, data)
 
             if is_second_object:
