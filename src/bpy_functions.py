@@ -59,6 +59,15 @@ def add_obj(obj_location, obj_name):
     bpy.ops.import_scene.obj(filepath=obj_location)
     imported_object = bpy.context.selected_objects[0]
     imported_object.name = obj_name
+    return imported_object
+
+
+def hide_object(obj, flag):
+    obj.hide_render = flag
+
+
+def remove_obj(obj):
+    bpy.data.objects.remove(obj, do_unlink=True)
 
 
 def add_fbx(obj_location, obj_name):
@@ -96,16 +105,12 @@ def get_random_loc(distance_limits, elevation_limits, rotation_limits):
 
 
 def move_obj(obj, target_loc, target_rot):
-    obj = bpy.data.objects[obj]
     obj.location = target_loc
     obj.rotation_euler[2] = math.radians(target_rot)
 
 
 def move_obj_into_camera_view(obj, camera, limits):
     min_z, max_z = limits[0]*2, limits[1]*2
-
-    # Base object for duplication
-    obj = bpy.data.objects[obj]
 
     render = bpy.context.scene.render
     aspect = (render.resolution_x * render.pixel_aspect_x) / \
@@ -127,11 +132,9 @@ def move_obj_into_camera_view(obj, camera, limits):
                 frame[0].z])
     # distance = max_z * math.sqrt(random.uniform(math.pow(min_z / max_z, 1), 1))
     distance = randint(min_z, max_z)
-    print(distance)
     loc_w = camera.matrix_world @ (distance * v)
 
     obj.select_set(True)
-    print(loc_w)
     obj.location = loc_w
     # bpy.ops.object.duplicate_move_linked(TRANSFORM_OT_translate={"value": loc_w})
     bpy.ops.object.select_all(action='DESELECT')
@@ -158,10 +161,12 @@ def add_camera(name, loc, cam_type, scale):
     return cam_object
 
 
-def add_camera_blur(cam_object):
-    cam_object.data.dof.use_dof = True
-    cam_object.data.dof.focus_distance = 1.
-
+def change_camera_blur(cam_object, option):
+    if option:
+        cam_object.data.dof.use_dof = True
+        cam_object.data.dof.focus_distance = 1.
+    else:
+        cam_object.data.dof.use_dof = False
 
 def set_resolution(res):
     bpy.context.scene.render.resolution_x = res[0]
@@ -205,10 +210,8 @@ def add_single_light(name, lt_type, loc, energy, color, angle):
     light_data.color[2] = color[2]
 
 
-def look_at(cam_name, target_name):
-    target_obj = bpy.data.objects[target_name]
+def look_at(cam_obj, target_obj):
     target_loc = target_obj.location
-    cam_obj = bpy.data.objects[cam_name]
     cam_loc = cam_obj.matrix_world.to_translation()
 
     direction = target_loc - cam_loc
@@ -222,9 +225,7 @@ def look_at(cam_name, target_name):
     return [cam_obj.rotation_euler[0], cam_obj.rotation_euler[1], cam_obj.rotation_euler[2]]
 
 
-def get_fov(cam_name):
-    cam_obj = bpy.data.objects[cam_name]
-
+def get_fov(cam_obj):
     render_width = bpy.context.scene.render.resolution_x
     render_height = bpy.context.scene.render.resolution_y
     aspect = render_width / render_height
@@ -239,14 +240,13 @@ def get_fov(cam_name):
     return v_fov, h_fov
 
 
-def rotate_cam(cam_name):
+def rotate_cam(cam_obj):
 
-    v_fov, h_fov = get_fov(cam_name)
+    v_fov, h_fov = get_fov(cam_obj)
     v_angle = randint(int(-v_fov*100/2), int(v_fov*100/2))/100.
     h_angle = randint(int(-h_fov*100/2), int(h_fov*100/2))/100.
 
     bpy.ops.object.select_all(action='DESELECT')
-    cam_obj = bpy.data.objects[cam_name]
     cam_obj.select_set(True)
 
     ov = bpy.context.copy()
@@ -254,6 +254,49 @@ def rotate_cam(cam_name):
 
     bpy.ops.transform.rotate(ov, value=v_angle, orient_axis='Y', orient_type='LOCAL')
     bpy.ops.transform.rotate(ov, value=h_angle, orient_axis='Z', orient_type='LOCAL')
+
+
+def bounding_box_data(cam, obj):
+    mat = cam.matrix_world.normalized().inverted()
+    me = obj.to_mesh(preserve_all_data_layers=True, depsgraph=bpy.context.evaluated_depsgraph_get())
+    me.transform(obj.matrix_world)
+    me.transform(mat)
+
+    camera = cam.data
+    frame = [-v for v in camera.view_frame(scene=scene)[:3]]
+    camera_persp = camera.type != 'ORTHO'
+
+    lx = []
+    ly = []
+
+    for v in me.vertices:
+        co_local = v.co
+        z = -co_local.z
+
+        if camera_persp:
+            if z == 0.0:
+                lx.append(0.5)
+                ly.append(0.5)
+            # if z <= 0.0:
+            #     continue
+            else:
+                frame = [(v / (v.z / z)) for v in frame]
+
+        min_x, max_x = frame[1].x, frame[2].x
+        min_y, max_y = frame[0].y, frame[1].y
+
+        x = (co_local.x - min_x) / (max_x - min_x)
+        y = (co_local.y - min_y) / (max_y - min_y)
+
+        lx.append(x)
+        ly.append(y)
+
+    min_x = max(0.0, min(min(lx), 1.0))
+    max_x = max(0.0, min(max(lx), 1.0))
+    min_y = 1 - max(0.0, min(max(ly), 1.0))
+    max_y = 1 - max(0.0, min(min(ly), 1.0))
+
+    return min_x, min_y, max_x, max_y
 
 
 def write_data(data_loc, data):

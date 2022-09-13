@@ -29,44 +29,71 @@ if not os.path.exists(base_dir + "/images"):
 if not os.path.exists(base_dir + "/data"):
     os.mkdir(base_dir + "/data")
 
+data = np.asarray([["Distance", "ImgPath", "Box_min_x", "Box_min_y", "Box_max_x", "Box_max_y"]])
+csv_path = '/data/data.csv'
+write_data(base_dir + csv_path, data)
+
 initiate_blender()
-add_world("world/" + config["world_name"][0] + ".hdr")
 
 camera = add_camera(config["cam_name"],
                     config["cam_loc"],
                     config["cam_mode"],
                     config["cam_scale"])
 set_resolution(config["out_resolution"])
-if config["camera_blur"][0]:
-    add_camera_blur(camera)
 
-add_obj("object/" + config["object_name"][0] + ".obj", config["object_name"][0] + "_obj")
+main_objects = [add_obj("object/" + obj + ".obj", obj + "_obj") for obj in config["object_name"]]
+secondary_objects = [add_obj("object/" + obj + ".obj", obj + "_second_obj") for obj in config["additional_object_name"]]
+for i in main_objects:
+    hide_object(i, True)
+for i in secondary_objects:
+    hide_object(i, True)
 
-if config["additional_object"][0]:
-    add_obj("object/" + config["additional_object_name"][0] + ".obj", config["additional_object_name"][0] + "_dummy_obj")
+img_count = 0
 
-data = np.asarray([["Distance", "ImgPath"]])
-csv_path = '/data/data.csv'
-write_data(base_dir + csv_path, data)
+for main_obj in main_objects:
+    hide_object(main_obj, False)
 
-for i in range(config["dataset_size"]):
+    for is_second_object in config["additional_object"]:
+        if is_second_object:
+            sec_obj_copy = secondary_objects.copy()
+        else:
+            sec_obj_copy = [None]
 
-    target_loc = get_random_loc(config["distance_limits"], config["elevation_limits"], config["rotation_limits"])
-    target_rot = randint(0, 360)
+        for secondary_object in sec_obj_copy:
+            if is_second_object:
+                hide_object(secondary_object, False)
 
-    move_obj(config["object_name"][0] + "_obj", target_loc, target_rot)
-    look_at(config["cam_name"], config["object_name"][0] + "_obj")
+            for camera_blur in config["camera_blur"]:
+                change_camera_blur(camera, camera_blur)
 
-    rotate_cam(config["cam_name"])
+                for world_name in config["world_name"]:
+                    add_world("world/" + world_name + ".hdr")
 
-    if config["additional_object"][0]:
-        move_obj_into_camera_view(config["additional_object_name"][0] + "_dummy_obj", camera, config["distance_limits"])
+                    for i in range(config["dataset_size"]):
+                        img_count += 1
 
-    img_path = 'images/' + f'{i+1:04d}' + '.jpg'
-    save_loc = base_dir + img_path
-    render_surface_image(save_loc,
-                         config["render_settings"])
+                        target_loc = get_random_loc(config["distance_limits"], config["elevation_limits"], config["rotation_limits"])
+                        target_rot = randint(0, 360)
 
-    dist = math.sqrt(target_loc[0]**2 + target_loc[1]**2 + target_loc[2]**2)
-    data = np.array([[dist, img_path]])
-    write_data(base_dir + csv_path, data)
+                        move_obj(main_obj, target_loc, target_rot)
+                        look_at(camera, main_obj)
+
+                        rotate_cam(camera)
+
+                        if is_second_object:
+                            move_obj_into_camera_view(secondary_object, camera, config["distance_limits"])
+
+                        img_path = 'images/' + f'{img_count:04d}' + '.jpg'
+                        save_loc = base_dir + img_path
+                        min_x, min_y, max_x, max_y = bounding_box_data(camera, main_obj)
+                        render_surface_image(save_loc,
+                                             config["render_settings"])
+
+                        dist = math.sqrt(target_loc[0]**2 + target_loc[1]**2 + target_loc[2]**2)
+                        data = np.array([[dist, img_path, min_x, min_y, max_x, max_y]])
+                        write_data(base_dir + csv_path, data)
+
+            if is_second_object:
+                hide_object(secondary_object, True)
+
+    hide_object(main_obj, True)

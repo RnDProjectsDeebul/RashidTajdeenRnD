@@ -126,12 +126,13 @@ class UI:
         custom_config["distance_limits"][1] = int(max_dist)
         custom_config["object_name"] = [obj_name]
         if additional_obj:
-            custom_config["additional_object"] = True
+            custom_config["additional_object"] = [True]
             custom_config["additional_object_name"] = [additional_obj_name]
         else:
-            custom_config["additional_object"] = False
+            custom_config["additional_object"] = [False]
+            custom_config["additional_object_name"] = []
         custom_config["world_name"] = [world_name]
-        custom_config["camera_blur"] = camera_blur
+        custom_config["camera_blur"] = [camera_blur]
         custom_config["dataset_name"] = dataset_name
 
         with open("config/generate_override.json", 'w+') as f:
