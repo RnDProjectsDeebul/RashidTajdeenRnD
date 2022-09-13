@@ -76,9 +76,9 @@ for main_obj in main_objects:
                         target_rot = randint(0, 360)
 
                         move_obj(main_obj, target_loc, target_rot)
-                        look_at(config["cam_name"], main_obj)
+                        look_at(camera, main_obj)
 
-                        rotate_cam(config["cam_name"])
+                        rotate_cam(camera)
 
                         if is_second_object:
                             move_obj_into_camera_view(secondary_object, camera, config["distance_limits"])

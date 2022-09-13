@@ -210,9 +210,8 @@ def add_single_light(name, lt_type, loc, energy, color, angle):
     light_data.color[2] = color[2]
 
 
-def look_at(cam_name, target_obj):
+def look_at(cam_obj, target_obj):
     target_loc = target_obj.location
-    cam_obj = bpy.data.objects[cam_name]
     cam_loc = cam_obj.matrix_world.to_translation()
 
     direction = target_loc - cam_loc
@@ -226,9 +225,7 @@ def look_at(cam_name, target_obj):
     return [cam_obj.rotation_euler[0], cam_obj.rotation_euler[1], cam_obj.rotation_euler[2]]
 
 
-def get_fov(cam_name):
-    cam_obj = bpy.data.objects[cam_name]
-
+def get_fov(cam_obj):
     render_width = bpy.context.scene.render.resolution_x
     render_height = bpy.context.scene.render.resolution_y
     aspect = render_width / render_height
@@ -243,14 +240,13 @@ def get_fov(cam_name):
     return v_fov, h_fov
 
 
-def rotate_cam(cam_name):
+def rotate_cam(cam_obj):
 
-    v_fov, h_fov = get_fov(cam_name)
+    v_fov, h_fov = get_fov(cam_obj)
     v_angle = randint(int(-v_fov*100/2), int(v_fov*100/2))/100.
     h_angle = randint(int(-h_fov*100/2), int(h_fov*100/2))/100.
 
     bpy.ops.object.select_all(action='DESELECT')
-    cam_obj = bpy.data.objects[cam_name]
     cam_obj.select_set(True)
 
     ov = bpy.context.copy()
