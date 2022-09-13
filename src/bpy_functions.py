@@ -62,7 +62,7 @@ def add_obj(obj_location, obj_name):
     return imported_object
 
 
-def change_obj_visibitity(obj, flag):
+def hide_object(obj, flag):
     obj.hide_render = flag
 
 
@@ -105,16 +105,12 @@ def get_random_loc(distance_limits, elevation_limits, rotation_limits):
 
 
 def move_obj(obj, target_loc, target_rot):
-    obj = bpy.data.objects[obj]
     obj.location = target_loc
     obj.rotation_euler[2] = math.radians(target_rot)
 
 
 def move_obj_into_camera_view(obj, camera, limits):
     min_z, max_z = limits[0]*2, limits[1]*2
-
-    # Base object for duplication
-    obj = bpy.data.objects[obj]
 
     render = bpy.context.scene.render
     aspect = (render.resolution_x * render.pixel_aspect_x) / \
@@ -214,8 +210,7 @@ def add_single_light(name, lt_type, loc, energy, color, angle):
     light_data.color[2] = color[2]
 
 
-def look_at(cam_name, target_name):
-    target_obj = bpy.data.objects[target_name]
+def look_at(cam_name, target_obj):
     target_loc = target_obj.location
     cam_obj = bpy.data.objects[cam_name]
     cam_loc = cam_obj.matrix_world.to_translation()
